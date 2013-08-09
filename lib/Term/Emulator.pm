@@ -85,19 +85,24 @@ sub execute_bg {
     return $self->execute_background(@args);
 }
 
+sub _handle_input {
+    my ( $self ) = @_;
+
+    my $pty    = $self->_pty;
+    my $buffer = ' ';
+
+    while(sysread($pty, $buffer, 1)) {
+        use feature qw(say);
+        say ord($buffer);
+    }
+}
+
 sub wait {
     my ( $self ) = @_;
 
     croak "No background process running" unless defined $self->_background_pid;
 
-    my $pty    = $self->_pty;
-    my $buffer = ' ';
-
-    # XXX where else should we do this reading?
-    while(sysread($pty, $buffer, 1)) {
-        use feature qw(say);
-        say ord($buffer);
-    }
+    $self->_handle_input;
 
     waitpid $self->_background_pid, 0;
     return;
