@@ -124,6 +124,11 @@ sub attach {
 
 sub feed {
     my ( $self, $input ) = @_;
+
+    croak "No background process running" unless defined $self->_background_pid;
+
+    print { $self->_pty } $input;
+    return;
 }
 
 sub reset {
