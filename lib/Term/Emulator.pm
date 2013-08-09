@@ -125,6 +125,7 @@ sub execute_background {
     } else {
         $self->attach;
         exec $command ( $command, @args );
+        die "Cannot execute $command: $!";
     }
 }
 
