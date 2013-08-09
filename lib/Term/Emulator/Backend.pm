@@ -5,6 +5,8 @@ package Term::Emulator::Backend;
 use Moose::Role;
 
 requires 'save';
+requires 'handle_raw_input';
+requires 'handle_tab';
 
 1;
 
