@@ -389,4 +389,69 @@ The reason I decided to write this module was as a debugging tool for running Vi
 in a pseudo-terminal when using it in an automated fashion.  I'm hoping that others
 find other uses for it.
 
+=head1 CAVEATS
+
+This is an early version of this module, so it has the following caveats:
+
+=over 4
+
+=item *
+
+Implements a small subset of XTerm control sequences.
+
+=item *
+
+Running more than one program (one after the other) currently doesn't work.
+
+=item *
+
+All handling of input from the child program happens in L</wait>.  I'd like
+to add a method to process a chunk of input, and/or provide hooks that can
+be used with an event loop.
+
+=item *
+
+L</reset> currently does nothing.
+
+=item *
+
+Specifying a custom terminal size currently does nothing.
+
+=item *
+
+There's only a single backend at the moment (Cairo).
+
+=item *
+
+The Cairo backend doesn't handle terminal attributes or background colors.
+
+=item *
+
+The Cairo backend has a lot of hardcoded crap in it (font family, font size, colors, etc)
+
+=item *
+
+I can't vouch for this module's performance.  It's fast enough in my tests; I'll work on
+performance improvements as needed.
+
+=item *
+
+Error handling could be better.
+
+=item *
+
+UTF-8 support isn't there.
+
+=item *
+
+The Cairo backend can only write PNG files.
+
+=item *
+
+The usage described by "Advanced Usage" doesn't work.
+
+=back
+
+I hope to have addressed most of these by the first actual release.
+
 =cut
