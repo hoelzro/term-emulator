@@ -60,7 +60,7 @@ sub execute {
 }
 
 sub execute_background {
-    my ( $self, @args ) = @_;
+    my ( $self, $command, @args ) = @_;
 
     croak "Background process $self->_background_pid already running" if defined $self->_background_pid;
 
@@ -75,7 +75,7 @@ sub execute_background {
         return $pid;
     } else {
         $self->attach;
-        exec $args[0], @args;
+        exec $command ( $command, @args );
     }
 }
 
