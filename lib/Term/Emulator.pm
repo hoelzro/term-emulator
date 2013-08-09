@@ -96,9 +96,20 @@ sub _handle_input {
     my $pty    = $self->_pty;
     my $buffer = ' ';
 
+    my $backend = $self->backend;
+
+    # XXX grab more than one byte at a time?
+    # XXX what about UTF-8?
     while(sysread($pty, $buffer, 1)) {
         use feature qw(say);
-        say ord($buffer);
+
+        if($buffer eq "\t") {
+            $backend->handle_tab;
+        } elsif($buffer =~ /[[:print:]]/) {
+            $backend->handle_raw_input($buffer);
+        } else {
+            say ord($buffer);
+        }
     }
 }
 
