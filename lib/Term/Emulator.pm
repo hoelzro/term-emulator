@@ -17,10 +17,6 @@ has backend => (
 
 sub BUILD {
     my ( $self ) = @_;
-
-    use feature qw(say);
-    say $self->width;
-    say $self->height;
 }
 
 sub _build_width {
