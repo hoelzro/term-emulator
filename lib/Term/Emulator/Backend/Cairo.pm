@@ -61,6 +61,24 @@ sub handle_raw_input {
     # XXX handle length($input) > 1
 }
 
+sub handle_set_attribute {
+    my ( $self, $attribute ) = @_;
+
+    # XXX implement!
+}
+
+sub handle_set_fg_color {
+    my ( $self, $red, $green, $blue ) = @_;
+
+    $self->_context->set_source_rgb($red, $green, $blue);
+}
+
+sub handle_set_bg_color {
+    my ( $self, $red, $green, $blue ) = @_;
+
+    # XXX implement!
+}
+
 1;
 
 __END__
