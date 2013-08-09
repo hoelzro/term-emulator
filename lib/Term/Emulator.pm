@@ -28,6 +28,8 @@ sub BUILD {
     my ( $self ) = @_;
 
     $self->_pty(IO::Pty->new);
+
+    return;
 }
 
 sub _build_width {
