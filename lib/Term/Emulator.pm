@@ -107,6 +107,7 @@ sub execute {
     return;
 }
 
+# XXX make sure you set TERM
 sub execute_background {
     my ( $self, $command, @args ) = @_;
 
