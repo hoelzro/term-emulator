@@ -68,6 +68,8 @@ sub execute_background {
 
     if($pid) {
         $self->_background_pid($pid);
+        $self->_pty->slave; # make sure we have a slave
+        $self->_pty->close_slave;
         return $pid;
     } else {
         $self->attach;
