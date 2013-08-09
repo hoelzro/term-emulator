@@ -85,6 +85,20 @@ sub execute_bg {
 
 sub wait {
     my ( $self ) = @_;
+
+    croak "No background process running" unless defined $self->_background_pid;
+
+    my $pty    = $self->_pty;
+    my $buffer = ' ';
+
+    # XXX where else should we do this reading?
+    while(sysread($pty, $buffer, 1)) {
+        use feature qw(say);
+        say ord($buffer);
+    }
+
+    waitpid $self->_background_pid, 0;
+    return;
 }
 
 sub attach {
