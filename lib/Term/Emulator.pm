@@ -2,6 +2,7 @@
 package Term::Emulator;
 
 ## use critic (RequireUseStrict)
+use Carp qw(croak);
 use Moo;
 use IO::Pty;
 use Term::ReadKey qw(GetTerminalSize);
@@ -58,6 +59,18 @@ sub execute {
 
 sub execute_background {
     my ( $self, @args ) = @_;
+
+    my $pid = fork;
+
+    croak "Unable to create child process: $!" unless defined $pid;
+
+    if($pid) {
+        $self->_background_pid($pid);
+        return $pid;
+    } else {
+        $self->attach;
+        exec $args[0], @args;
+    }
 }
 
 sub execute_bg {
