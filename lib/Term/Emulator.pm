@@ -4,15 +4,36 @@ package Term::Emulator;
 ## use critic (RequireUseStrict)
 use Moo;
 use IO::Pty;
+use Term::ReadKey qw(GetTerminalSize);
 
 has [qw/width height/] => (
-    is => 'ro',
+    is => 'lazy',
 );
 
 has backend => (
     is      => 'ro',
     handles => [qw/save/],
 );
+
+sub BUILD {
+    my ( $self ) = @_;
+
+    use feature qw(say);
+    say $self->width;
+    say $self->height;
+}
+
+sub _build_width {
+    # XXX hardcoded STDIN!
+    my ( $width, undef ) = GetTerminalSize(\*STDIN);
+    return $width;
+}
+
+sub _build_height {
+    # XXX hardcoded STDIN!
+    my ( undef, $height ) = GetTerminalSize(\*STDIN);
+    return $height;
+}
 
 sub execute {
     my ( $self, @args ) = @_;
