@@ -54,6 +54,12 @@ sub handle_tab {
 
 sub handle_newline {
     my ( $self ) = @_;
+
+    my $cr = $self->_context;
+
+    my ( undef, $y ) = $cr->get_current_point;
+
+    $cr->move_to(0, $y + 20);
 }
 
 sub handle_raw_input {
