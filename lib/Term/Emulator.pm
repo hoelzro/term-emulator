@@ -5,7 +5,7 @@ package Term::Emulator;
 use Carp qw(croak);
 use Moo;
 use IO::Pty;
-use Term::ReadKey qw(GetTerminalSize);
+use Term::ReadKey qw(GetTerminalSize SetTerminalSize);
 
 has [qw/width height/] => (
     is => 'lazy',
@@ -103,6 +103,23 @@ sub wait {
 
 sub attach {
     my ( $self ) = @_;
+
+    my $pty   = $self->_pty;
+    my $slave = $pty->slave;
+
+    $pty->make_slave_controlling_terminal;
+    $slave->set_raw;
+
+    close $pty;
+
+    open STDIN,  '<&', $slave;
+    open STDOUT, '>&', $slave;
+    open STDERR, '>&', $slave;
+
+    # XXX 0 for pixel values (for now)
+    SetTerminalSize($self->width, $self->height, 0, 0);
+
+    return;
 }
 
 sub feed {
