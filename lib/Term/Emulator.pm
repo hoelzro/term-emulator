@@ -15,8 +15,18 @@ has backend => (
     handles => [qw/save/],
 );
 
+has _pty => (
+    is => 'rw',
+);
+
+has _background_pid => (
+    is => 'rw',
+);
+
 sub BUILD {
     my ( $self ) = @_;
+
+    $self->_pty(IO::Pty->new);
 }
 
 sub _build_width {
