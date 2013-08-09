@@ -11,7 +11,7 @@ has [qw/width height/] => (
 );
 
 has backend => (
-    is      => 'ro',
+    is      => 'lazy',
     handles => [qw/save/],
 );
 
@@ -33,6 +33,12 @@ sub _build_height {
     # XXX hardcoded STDIN!
     my ( undef, $height ) = GetTerminalSize(\*STDIN);
     return $height;
+}
+
+sub _build_backend {
+    require Term::Emulator::Backend::Cairo;
+
+    return Term::Emulator::Backend::Cairo->new;
 }
 
 sub execute {
