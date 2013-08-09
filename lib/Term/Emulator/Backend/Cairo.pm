@@ -6,6 +6,10 @@ use Moo;
 
 with 'Term::Emulator::Backend';
 
+sub save {
+    my ( $self, $filename ) = @_;
+}
+
 1;
 
 __END__

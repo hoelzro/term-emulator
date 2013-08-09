@@ -4,6 +4,8 @@ package Term::Emulator::Backend;
 ## use critic (RequireUseStrict)
 use Moose::Role;
 
+requires 'save';
+
 1;
 
 __END__
