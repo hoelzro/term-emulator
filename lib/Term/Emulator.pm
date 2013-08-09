@@ -303,6 +303,13 @@ __END__
 
 =head1 DESCRIPTION
 
+L<Term::Emulator> exists so that Perl programs may run child
+programs in a pseudo-terminal environment and record what they're
+doing.  This could be recording a text-based description, creating
+a PNG snapshot of the terminal's state at the end of the program,
+or even creating an animated GIF showing the change in terminal state
+over the course of the execution.
+
 =head1 ATTRIBUTES
 
 =head2 width
