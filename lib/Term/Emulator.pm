@@ -228,12 +228,14 @@ sub attach {
 
     close $pty;
 
+    $slave->clone_winsize_from(\*STDIN);
+
     open STDIN,  '<&', $slave;
     open STDOUT, '>&', $slave;
     open STDERR, '>&', $slave;
 
     # XXX 0 for pixel values (for now)
-    SetTerminalSize($self->width, $self->height, 0, 0);
+    #SetTerminalSize($self->width, $self->height, 0, 0);
 
     return;
 }
