@@ -3,6 +3,7 @@ package Term::Emulator;
 
 ## use critic (RequireUseStrict)
 use Moo;
+use IO::Pty;
 
 has [qw/width height/] => (
     is => 'ro',
