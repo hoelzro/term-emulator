@@ -383,4 +383,10 @@ background process to wait for.
 Resets the terminal's state.  This may come in handy when running several
 programs and you don't want them to step on each others' toes.
 
+=head1 RATIONALE
+
+The reason I decided to write this module was as a debugging tool for running Vim
+in a pseudo-terminal when using it in an automated fashion.  I'm hoping that others
+find other uses for it.
+
 =cut
