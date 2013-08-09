@@ -7,6 +7,7 @@ use Moose::Role;
 requires 'save';
 requires 'handle_raw_input';
 requires 'handle_tab';
+requires 'handle_newline';
 requires 'handle_set_attribute';
 requires 'handle_set_fg_color';
 requires 'handle_set_bg_color';

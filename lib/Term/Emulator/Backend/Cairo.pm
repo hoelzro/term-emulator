@@ -52,6 +52,10 @@ sub handle_tab {
     $self->_context->show_text(' ' x 8);
 }
 
+sub handle_newline {
+    my ( $self ) = @_;
+}
+
 sub handle_raw_input {
     my ( $self, $input ) = @_;
 

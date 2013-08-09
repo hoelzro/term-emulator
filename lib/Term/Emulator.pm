@@ -195,6 +195,8 @@ sub _handle_input {
             _handle_escape_sequence($backend, $pty);
         } elsif($buffer eq "\t") {
             $backend->handle_tab;
+        } elsif($buffer eq "\n") {
+            $backend->handle_newline;
         } elsif($buffer =~ /[[:print:]]/) {
             $backend->handle_raw_input($buffer);
         } else {
