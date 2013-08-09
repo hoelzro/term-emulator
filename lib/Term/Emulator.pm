@@ -211,6 +211,7 @@ sub wait {
     $self->_handle_input;
 
     waitpid $self->_background_pid, 0;
+    $self->_background_pid(undef);
     return;
 }
 
