@@ -60,6 +60,8 @@ sub execute {
 sub execute_background {
     my ( $self, @args ) = @_;
 
+    croak "Background process $self->_background_pid already running" if defined $self->_background_pid;
+
     my $pid = fork;
 
     croak "Unable to create child process: $!" unless defined $pid;
