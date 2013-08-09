@@ -45,9 +45,14 @@ sub _build_height {
 }
 
 sub _build_backend {
+    my ( $self ) = @_;
+
     require Term::Emulator::Backend::Cairo;
 
-    return Term::Emulator::Backend::Cairo->new;
+    return Term::Emulator::Backend::Cairo->new(
+        width  => $self->width,
+        height => $self->height,
+    );
 }
 
 sub execute {
