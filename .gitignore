@@ -1,2 +1,5 @@
 Term-Emulator*
 .build
+blib
+*.so
+*.o
