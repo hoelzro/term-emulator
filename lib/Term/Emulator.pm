@@ -7,6 +7,10 @@ use Moo;
 use IO::Pty;
 use Term::ReadKey qw(GetTerminalSize SetTerminalSize);
 
+require XSLoader;
+
+XSLoader::load('Term::Emulator', '0.01');
+
 has [qw/width height/] => (
     is => 'lazy',
 );
@@ -22,49 +26,6 @@ has _pty => (
 
 has _background_pid => (
     is => 'rw',
-);
-
-my $FIRST_FG_COLOR = 30;
-my $FIRST_BG_COLOR = 40;
-my $LAST_BG_COLOR  = 49;
-
-my %ATTRIBUTE_FOR_CODE = (
-    0  => 'normal',
-    1  => 'bold',
-    4  => 'underlined',
-    5  => 'blink',
-    7  => 'inverse',
-    8  => 'hidden',
-    22 => 'normal',
-    24 => '-underlined',
-    25 => '-blink',
-    27 => '-inverse',
-    28 => '-hidden',
-);
-
-# XXX should we delegate these definitions to the backend?
-my %FG_COLOR_FOR_CODE = (
-    30 => [ 0,    0,    0 ],
-    31 => [ 0xFF, 0,    0 ],
-    32 => [ 0,    0xFF, 0 ],
-    33 => [ 0xFF, 0xFF, 0 ],
-    34 => [ 0,    0,    0xFF ],
-    35 => [ 0xFF, 0,    0xFF ],
-    36 => [ 0,    0xFF, 0xFF ],
-    37 => [ 0xFF, 0xFF, 0xFF ],
-    #39 => original,
-);
-
-my %BG_COLOR_FOR_CODE = (
-    40 => [ 0,    0,    0 ],
-    41 => [ 0xFF, 0,    0 ],
-    42 => [ 0,    0xFF, 0 ],
-    43 => [ 0xFF, 0xFF, 0 ],
-    44 => [ 0,    0,    0xFF ],
-    45 => [ 0xFF, 0,    0xFF ],
-    46 => [ 0,    0xFF, 0xFF ],
-    47 => [ 0xFF, 0xFF, 0xFF ],
-    #49 => original,
 );
 
 sub BUILD {
@@ -133,77 +94,6 @@ sub execute_bg {
     my ( $self, @args ) = @_;
 
     return $self->execute_background(@args);
-}
-
-sub _handle_escape_sequence {
-    my ( $backend, $pty ) = @_;
-
-    my $buffer = ' ';
-
-    # XXX grab more than one byte at a time?
-    # XXX handle error
-    sysread($pty, $buffer, 1);
-
-    my @params;
-
-    use feature qw(say);
-    if($buffer eq '[') {
-        # XXX handle error
-        while(sysread($pty, $buffer, 1)) {
-            if($buffer =~ /[0-9]/) {
-                push @params, '' if @params == 0;
-                $params[$#params] .= $buffer;
-                next;
-            } elsif($buffer eq ';') {
-                push @params, '';
-                next;
-            } elsif($buffer eq 'm') {
-                foreach my $param (@params) {
-                    if($param < $FIRST_FG_COLOR) {
-                        $backend->handle_set_attribute($ATTRIBUTE_FOR_CODE{$param});
-                    } elsif($param < $FIRST_BG_COLOR) {
-                        $backend->handle_set_fg_color(@{ $FG_COLOR_FOR_CODE{$param} });
-                    } elsif($param > $LAST_BG_COLOR) {
-                        # XXX freak out
-                    } else {
-                        $backend->handle_set_bg_color(@{ $BG_COLOR_FOR_CODE{$param} });
-                    }
-                }
-            } else {
-                say "unrecognized escape character '$buffer'";
-            }
-            last;
-        }
-    } else {
-        # XXX do something
-    }
-}
-
-sub _handle_input {
-    my ( $self ) = @_;
-
-    my $pty    = $self->_pty;
-    my $buffer = ' ';
-
-    my $backend = $self->backend;
-
-    # XXX grab more than one byte at a time?
-    # XXX what about UTF-8?
-    while(sysread($pty, $buffer, 1)) {
-        use feature qw(say);
-
-        if($buffer eq "\e") {
-            _handle_escape_sequence($backend, $pty);
-        } elsif($buffer eq "\t") {
-            $backend->handle_tab;
-        } elsif($buffer eq "\n") {
-            $backend->handle_newline;
-        } elsif($buffer =~ /[[:print:]]/) {
-            $backend->handle_raw_input($buffer);
-        } else {
-            say ord($buffer);
-        }
-    }
 }
 
 sub wait {
