@@ -89,6 +89,26 @@ sub handle_set_bg_color {
     # XXX implement!
 }
 
+sub handle_cursor_move {
+    my ( $self, $dx, $dy ) = @_;
+
+    my $cr = $self->_context;
+    my ( $x, $y ) = $cr->get_current_point;
+
+    $x += ($dx * 20);
+    $y += ($dy * 20);
+
+    $cr->move_to($x, $y);
+}
+
+sub handle_cursor_set {
+    my ( $self, $x, $y ) = @_;
+
+    my $cr = $self->_context;
+
+    $cr->move_to($x, $y);
+}
+
 1;
 
 __END__

@@ -140,6 +140,44 @@ handle_attr_or_color(pTHX_ PerlIO *pty, SV *backend, int param)
 }
 
 static void
+handle_cursor_move(pTHX_ SV *backend, int dx, int dy)
+{
+    dSP;
+    ENTER;
+    SAVETMPS;
+
+    PUSHMARK(SP);
+    XPUSHs(backend);
+    XPUSHs(sv_2mortal(newSViv(dx)));
+    XPUSHs(sv_2mortal(newSViv(dy)));
+    PUTBACK;
+
+    call_method("handle_cursor_move", G_DISCARD);
+
+    FREETMPS;
+    LEAVE;
+}
+
+static void
+handle_cursor_set(pTHX_ SV *backend, int x, int y)
+{
+    dSP;
+    ENTER;
+    SAVETMPS;
+
+    PUSHMARK(SP);
+    XPUSHs(backend);
+    XPUSHs(sv_2mortal(newSViv(x)));
+    XPUSHs(sv_2mortal(newSViv(y)));
+    PUTBACK;
+
+    call_method("handle_cursor_set", G_DISCARD);
+
+    FREETMPS;
+    LEAVE;
+}
+
+static void
 handle_csi(pTHX_ PerlIO *pty, SV *backend)
 {
     int *optional_params;
@@ -156,6 +194,46 @@ handle_csi(pTHX_ PerlIO *pty, SV *backend)
                 for(i = 0; i < num_optional_params; i++) {
                     handle_attr_or_color(aTHX_ pty, backend, optional_params[i]);
                 }
+            }
+
+            break;
+        case 'A':
+        case 'B':
+        case 'C':
+        case 'D':
+            {
+                int dx       = 0;
+                int dy       = 0;
+
+                if(c == 'A' || c == 'B') {
+                    dy = (c == 'A') ? -1 : 1;
+                } else if(c == 'C' || c == 'D') {
+                    dx = (c == 'D') ? -1 : 1;
+                }
+
+                if(num_optional_params >= 1) {
+                    dx *= optional_params[0];
+                    dy *= optional_params[0];
+                }
+
+                handle_cursor_move(aTHX_ backend, dx, dy);
+            }
+
+            break;
+        case 'f':
+        case 'H':
+            {
+                int x = 0;
+                int y = 0;
+
+                if(num_optional_params >= 1) {
+                    y = optional_params[0];
+                    if(num_optional_params >= 2) {
+                        x = optional_params[1];
+                    }
+                }
+
+                handle_cursor_set(aTHX_ backend, x, y);
             }
 
             break;
